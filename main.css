@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+
+.main-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    max-width: 80%;
+}
+
+.article-container {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #ffffff;
+    min-width: 1000px !important; /* 실제 기사 가로 폭과 유사하게 설정 */
+    margin: auto;
+    padding: 40px 20px;
+}
+
+/* 상단 매체 로고 영역 */
+.article-header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.media-name {
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #000;
+}
+
+/* 제목 영역 */
+.article-title {
+    font-size: 26px;
+    line-height: 34px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 15px;
+    letter-spacing: -0.5px;
+}
+
+/* 기자 및 날짜 정보 */
+.article-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+    margin-bottom: 25px;
+}
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.author-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+}
+.article-date {
+    font-size: 13px;
+    color: #888;
+}
+
+/* 본문 영역 */
+.article-body {
+    font-size: 17px;
+    line-height: 28px;
+    color: #333;
+    text-align: left;
+    white-space: pre-line; /* 줄바꿈 유지 */
+}
+
+/* 이미지 저장 버튼 스타일 (외부) */
+.save-btn {
+    background-color: #00c73c; /* 네이버 상징색 */
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 20px;
+    width: 100%;
+}

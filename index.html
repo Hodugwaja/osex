@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뉴스 이미지 생성기</title>
+    <style>
+        :root {
+            --naver-green: #03c75a;
+            --bg-gray: #f5f6f8;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", dotum, sans-serif; background: var(--bg-gray); margin: 0; padding: 20px; display: flex; gap: 20px; }
+        
+        /* 에디터 설정 */
+        #editor { width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); height: fit-content; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-area { display: flex; gap: 5px; margin-top: 10px; }
+        button { flex: 1; padding: 10px; cursor: pointer; border: none; border-radius: 4px; background: #333; color: white; }
+        button.primary { background: var(--naver-green); }
+
+        /* 미리보기 (네이버 뉴스 스타일) */
+        #preview-container { background: white; width: 375px; min-height: 667px; padding: 20px; box-sizing: border-box; border: 1px solid #eee; position: relative; }
+        .news-category { color: #1e90ff; font-weight: bold; font-size: 14px; margin-bottom: 10px; }
+        .news-title { font-size: 22px; font-weight: bold; line-height: 1.4; margin-bottom: 15px; word-break: break-all; }
+        .reporter-info-top { font-size: 13px; color: #666; margin-bottom: 20px; }
+        
+        .content-area img { width: 100%; border-radius: 4px; margin: 15px 0 5px; }
+        .content-area p { font-size: 16px; line-height: 1.6; color: #333; margin: 10px 0; white-space: pre-wrap; }
+        .img-caption { font-size: 13px; color: #888; text-align: center; margin-bottom: 15px; }
+
+        .reporter-card { margin-top: 40px; padding: 15px; background: #f9f9f9; border-top: 1px solid #eee; display: flex; align-items: center; gap: 12px; }
+        .reporter-img { width: 50px; height: 50px; background: #ddd; border-radius: 50%; overflow: hidden; }
+        .reporter-text .name { font-weight: bold; font-size: 15px; }
+        .reporter-text .desc { font-size: 13px; color: #777; margin-top: 2px; }
+        .reporter-text .email { font-size: 12px; color: #03c75a; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div id="editor">
+    <h3>기사 에디터</h3>
+    <div class="input-group">
+        <label>기사 제목</label>
+        <input type="text" id="in-title" placeholder="제목을 입력하세요" oninput="update()">
+    </div>
+    <hr>
+    <div id="content-blocks">
+        </div>
+    <div class="btn-area">
+        <button onclick="addBlock('text')">+ 글 추가</button>
+        <button onclick="addBlock('image')">+ 사진 추가</button>
+    </div>
+    <hr>
+    <div class="input-group">
+        <label>기자 이름 / 이메일</label>
+        <input type="text" id="in-name" placeholder="홍길동" oninput="update()" style="width:45%">
+        <input type="text" id="in-email" placeholder="gildong@news.com" oninput="update()" style="width:50%">
+        <label style="margin-top:10px">기자 한줄 설명</label>
+        <input type="text" id="in-desc" placeholder="스포츠 전문 기자" oninput="update()">
+    </div>
+    <button class="primary" onclick="saveAsImage()" style="width: 100%; margin-top: 20px;">이미지로 저장하기</button>
+</div>
+
+<div id="preview-container">
+    <div class="news-category">야구</div>
+    <div class="news-title" id="out-title">기사 제목이 여기에 표시됩니다.</div>
+    <div class="reporter-info-top" id="out-date">2026.04.25 22:18</div>
+    
+    <div id="out-content" class="content-area">
+        </div>
+
+    <div class="reporter-card">
+        <div class="reporter-img"><img src="" id="out-rep-img" style="display:none; width:100%; height:100%; object-fit:cover;"></div>
+        <div class="reporter-text">
+            <div class="name" id="out-name">기자 이름</div>
+            <div class="desc" id="out-desc">기자 설명이 들어갑니다.</div>
+            <div class="email" id="out-email">email@news.com</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let blockCount = 0;
+
+    // 1. 문단 추가 함수
+    function addBlock(type) {
+        const container = document.getElementById('content-blocks');
+        const div = document.createElement('div');
+        div.className = 'input-group';
+        div.id = `block-${blockCount}`;
+        
+        if(type === 'text') {
+            div.innerHTML = `
+                <label>글 문단 <span onclick="removeBlock(${blockCount})" style="cursor:pointer;color:red;float:right">삭제</span></label>
+                <textarea oninput="update()" placeholder="내용을 입력하세요"></textarea>
+            `;
+        } else {
+            div.innerHTML = `
+                <label>사진 URL <span onclick="removeBlock(${blockCount})" style="cursor:pointer;color:red;float:right">삭제</span></label>
+                <input type="text" oninput="update()" placeholder="이미지 주소를 입력하세요">
+                <input type="text" oninput="update()" placeholder="사진 캡션(설명)" style="margin-top:5px; font-size:12px">
+            `;
+        }
+        container.appendChild(div);
+        blockCount++;
+        update();
+    }
+
+    function removeBlock(id) {
+        document.getElementById(`block-${id}`).remove();
+        update();
+    }
+
+    // 2. 실시간 미리보기 업데이트
+    function update() {
+        document.getElementById('out-title').innerText = document.getElementById('in-title').value || "기사 제목이 여기에 표시됩니다.";
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || "기자 이름";
+        document.getElementById('out-desc').innerText = document.getElementById('in-desc').value || "기자 설명이 들어갑니다.";
+        document.getElementById('out-email').innerText = document.getElementById('in-email').value || "email@news.com";
+
+        const outContent = document.getElementById('out-content');
+        outContent.innerHTML = '';
+        
+        const blocks = document.querySelectorAll('#content-blocks .input-group');
+        blocks.forEach(block => {
+            const textarea = block.querySelector('textarea');
+            const inputs = block.querySelectorAll('input');
+            
+            if(textarea) { // 텍스트 블록
+                const p = document.createElement('p');
+                p.innerText = textarea.value;
+                outContent.appendChild(p);
+            } else if(inputs.length > 0) { // 이미지 블록
+                const img = document.createElement('img');
+                img.src = inputs[0].value;
+                outContent.appendChild(img);
+                if(inputs[1].value) {
+                    const caption = document.createElement('div');
+                    caption.className = 'img-caption';
+                    caption.innerText = inputs[1].value;
+                    outContent.appendChild(caption);
+                }
+            }
+        });
+    }
+
+    // 3. 이미지로 저장 기능 (Canvas API 사용)
+    async function saveAsImage() {
+        const target = document.getElementById('preview-container');
+        
+        // 브라우저의 SVG 기능을 이용해 HTML을 이미지로 변환
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${target.offsetWidth}" height="${target.offsetHeight}">
+                <foreignObject width="100%" height="100%">
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+                        ${target.innerHTML}
+                        <style>
+                            ${Array.from(document.styleSheets[0].cssRules).map(rule => rule.cssText).join('')}
+                            #preview-container { border:none; }
+                        </style>
+                    </div>
+                </foreignObject>
+            </svg>
+        `;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = target.offsetWidth;
+        canvas.height = target.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        
+        const img = new Image();
+        const svgBlob = new Blob([svg], {type: 'image/svg+xml;charset=utf-8'});
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = function() {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            const pngUrl = canvas.toDataURL("image/png");
+            const downloadLink = document.createElement("a");
+            downloadLink.href = pngUrl;
+            downloadLink.download = "news-article.png";
+            downloadLink.click();
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
+</script>
+
+</body>
+</html>
