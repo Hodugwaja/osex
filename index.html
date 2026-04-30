@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>뉴스 이미지 생성기</title>
+    <title>기사 생성기</title>
     <style>
         :root {
             --naver-green: #03c75a;
@@ -50,24 +50,24 @@
     <div id="content-blocks">
         </div>
     <div class="btn-area">
-        <button onclick="addBlock('text')">+ 글 추가</button>
-        <button onclick="addBlock('image')">+ 사진 추가</button>
+        <button onclick="addBlock('text')">글 추가</button>
+        <button onclick="addBlock('image')">사진 추가</button>
     </div>
     <hr>
     <div class="input-group">
         <label>기자 이름 / 이메일</label>
-        <input type="text" id="in-name" placeholder="홍길동" oninput="update()" style="width:45%">
-        <input type="text" id="in-email" placeholder="gildong@news.com" oninput="update()" style="width:50%">
+        <input type="text" id="in-name" placeholder="카리대 기자" oninput="update()" style="width:45%">
+        <input type="text" id="in-email" placeholder="karidae@osans.com" oninput="update()" style="width:50%">
         <label style="margin-top:10px">기자 한줄 설명</label>
-        <input type="text" id="in-desc" placeholder="스포츠 전문 기자" oninput="update()">
+        <input type="text" id="in-desc" placeholder="샌즈" oninput="update()">
     </div>
     <button class="primary" onclick="saveAsImage()" style="width: 100%; margin-top: 20px;">이미지로 저장하기</button>
 </div>
 
 <div id="preview-container">
-    <div class="news-category">야구</div>
+    <!--<div class="news-category">야구</div>-->
     <div class="news-title" id="out-title">기사 제목이 여기에 표시됩니다.</div>
-    <div class="reporter-info-top" id="out-date">2026.04.25 22:18</div>
+    <div class="reporter-info-top" id="out-date">1972.11.21 22:18</div>
     
     <div id="out-content" class="content-area">
         </div>
@@ -83,6 +83,11 @@
 </div>
 
 <script>
+    window.onload = function() {
+        update();
+        console.log(document.getElementById('in-title').placeholder)
+    };
+
     let blockCount = 0;
 
     // 1. 문단 추가 함수
@@ -116,10 +121,10 @@
 
     // 2. 실시간 미리보기 업데이트
     function update() {
-        document.getElementById('out-title').innerText = document.getElementById('in-title').value || "기사 제목이 여기에 표시됩니다.";
-        document.getElementById('out-name').innerText = document.getElementById('in-name').value || "기자 이름";
-        document.getElementById('out-desc').innerText = document.getElementById('in-desc').value || "기자 설명이 들어갑니다.";
-        document.getElementById('out-email').innerText = document.getElementById('in-email').value || "email@news.com";
+        document.getElementById('out-title').innerText = document.getElementById('in-title').value || document.getElementById('in-title').placeholder;
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || document.getElementById('in-name').placeholder;
+        document.getElementById('out-desc').innerText = document.getElementById('in-desc').value || document.getElementById('in-desc').placeholder;
+        document.getElementById('out-email').innerText = document.getElementById('in-email').value || document.getElementById('in-email').placeholder;
 
         const outContent = document.getElementById('out-content');
         outContent.innerHTML = '';
